@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .hero {
+    background: url('/static/images/hero.jpg') no-repeat center center/cover;
+    color: #fff;
+    text-align: center;
+    padding: 4em 0;
+  }
+  
+  .destinations {
+    padding: 2em;
+    text-align: center;
+  }
+  
+  .destinations h2 {
+    margin-bottom: 1em;
+  }
+  
+  .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1em;
+    margin: 1em;
+    display: inline-block;
+    width: 300px;
+    text-align: left;
+  }
+  
+  .card img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  
