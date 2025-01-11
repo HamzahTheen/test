@@ -34,7 +34,7 @@
     const totalImages = 100;
     const imageWidth = 300; // Width of each image
     const imageHeight = 500; // Height of each image
-    const hoverSound = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Sound effect
+    const hoverSound = new Audio('/card_sound.mp3'); // Sound effect
 
     // Generate the placeholder images in rows
     function generateImages() {
@@ -124,5 +124,25 @@
     });
 </script>
 
+
+
+<script>
+    const audio = document.getElementById('background-sound');
+    
+    // Try to play the audio when the page loads
+    window.addEventListener('load', function() {
+        try {
+            audio.play();
+        } catch (e) {
+            // If autoplay is blocked, show a message to the user
+            alert("Click anywhere to enable background sound.");
+        }
+    });
+
+    // Add a click listener to start the audio on user interaction
+    document.body.addEventListener('click', function() {
+        audio.play();
+    });
+</script>
 </body>
 </html>
