@@ -13,6 +13,15 @@
             height: 100%;
             width: 100%;
             overflow: hidden; /* Disable default scrolling */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .wrapper {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
     </style>
 </head>
@@ -24,7 +33,7 @@
     Your browser does not support the audio element.
 </audio>
 
-<div class="wrapper absolute top-0 left-0 flex flex-col gap-4" id="wrapper">
+<div class="wrapper" id="wrapper">
     <!-- The rows will be dynamically added here -->
 </div>
 
@@ -36,27 +45,58 @@
     const imageHeight = 500; // Height of each image
     const hoverSound = new Audio('/card_sound.mp3'); // Sound effect
 
-    // Generate the placeholder images in rows
+    // Example list of image URLs
+    const imageUrls = [
+        '/img.jpeg?text=Image+1', '/img.jpeg?text=Image+2', 
+        '/img.jpeg?text=Image+3', '/img.jpeg?text=Image+4', 
+        '/img.jpeg?text=Image+5', '/img.jpeg?text=Image+6', 
+        '/img.jpeg?text=Image+7', '/img.jpeg?text=Image+8', 
+        '/img.jpeg?text=Image+9', '/img.jpeg?text=Image+10',
+        '/img.jpeg?text=Image+1', '/img.jpeg?text=Image+2', 
+        '/img.jpeg?text=Image+3', '/img.jpeg?text=Image+4', 
+        '/img.jpeg?text=Image+5', '/img.jpeg?text=Image+6', 
+        '/img.jpeg?text=Image+7', '/img.jpeg?text=Image+8', 
+        '/img.jpeg?text=Image+9', '/img.jpeg?text=Image+10',
+        '/img.jpeg?text=Image+1', '/img.jpeg?text=Image+2', 
+        '/img.jpeg?text=Image+3', '/img.jpeg?text=Image+4', 
+        '/img.jpeg?text=Image+5', '/img.jpeg?text=Image+6', 
+        '/img.jpeg?text=Image+7', '/img.jpeg?text=Image+8', 
+        '/img.jpeg?text=Image+9', '/img.jpeg?text=Image+10',
+                '/img.jpeg?text=Image+1', '/img.jpeg?text=Image+2', 
+        '/img.jpeg?text=Image+3', '/img.jpeg?text=Image+4', 
+        '/img.jpeg?text=Image+5', '/img.jpeg?text=Image+6', 
+        '/img.jpeg?text=Image+7', '/img.jpeg?text=Image+8', 
+        '/img.jpeg?text=Image+9', '/img.jpeg?text=Image+10',
+        // Add more URLs here
+    ];
+
+    // Generate the images in rows
     function generateImages() {
-        let currentImage = 1;
+        let currentImage = 0;
         for (let rowIndex = 0; rowIndex < Math.ceil(totalImages / imagesPerRow); rowIndex++) {
             const row = document.createElement('div');
             row.classList.add('flex', 'gap-4', 'flex-wrap');  // Add tailwind classes for flex, gap, and wrap
             
             for (let colIndex = 0; colIndex < imagesPerRow; colIndex++) {
-                if (currentImage <= totalImages) {
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'bg-gray-300 flex items-center justify-center text-xl text-black font-sans rounded-xl transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer';
-                    placeholder.style.width = `${imageWidth}px`;  // Set the image width dynamically
-                    placeholder.style.height = `${imageHeight}px`; // Set the image height dynamically
-                    placeholder.textContent = `Image ${currentImage}`;
-                    
+                if (currentImage < imageUrls.length) {
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-300 flex items-center justify-center rounded-xl transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer';
+                    card.style.width = `${imageWidth}px`;  // Set the image width dynamically
+                    card.style.height = `${imageHeight}px`; // Set the image height dynamically
+
+                    const image = document.createElement('img');
+                    image.src = imageUrls[currentImage];  // Set the image source
+                    image.alt = `Image ${currentImage + 1}`; // Add alt text
+                    image.classList.add('rounded-xl', 'w-full', 'h-full', 'object-cover', 'pointer-events-none');
+
+                    card.appendChild(image);
+
                     // Add hover sound effect
-                    placeholder.addEventListener('mouseenter', () => {
+                    card.addEventListener('mouseenter', () => {
                         hoverSound.play();  // Play sound when hovering
                     });
                     
-                    row.appendChild(placeholder);
+                    row.appendChild(card);
                     currentImage++;
                 }
             }
@@ -69,12 +109,6 @@
         // Set the wrapper height based on number of rows
         const rows = Math.ceil(totalImages / imagesPerRow);
         wrapper.style.height = `${rows * imageHeight + (rows - 1) * 16}px`; // Include gap between rows
-
-        // Center the wrapper initially
-        const initialLeft = (window.innerWidth - wrapper.offsetWidth) / 2;
-        const initialTop = (window.innerHeight - wrapper.offsetHeight) / 2;
-        wrapper.style.left = `${initialLeft}px`;
-        wrapper.style.top = `${initialTop}px`;
     }
 
     generateImages();
@@ -123,8 +157,6 @@
         wrapper.style.top = `${Math.min(Math.max(newTop, minY), maxY)}px`;
     });
 </script>
-
-
 
 <script>
     const audio = document.getElementById('background-sound');
