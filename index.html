@@ -15,10 +15,11 @@
             overflow: hidden; /* Disable default scrolling */
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Align to top */
         }
         .wrapper {
             position: absolute;
+            top: 1000px; /* Set initial vertical position to 1000px */
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -116,6 +117,19 @@
     let isDragging = false;
     let startX, startY, scrollLeft, scrollTop;
 
+    // Restore position from localStorage on page load
+    window.addEventListener('load', () => {
+        const savedTop = localStorage.getItem('wrapperTop');
+        const savedLeft = localStorage.getItem('wrapperLeft');
+        
+        if (savedTop) {
+            wrapper.style.top = savedTop;
+        }
+        if (savedLeft) {
+            wrapper.style.left = savedLeft;
+        }
+    });
+
     window.addEventListener('mousedown', (e) => {
         isDragging = true;
         document.body.style.cursor = 'grabbing';  // Change cursor when dragging
@@ -133,6 +147,9 @@
     window.addEventListener('mouseup', () => {
         isDragging = false;
         document.body.style.cursor = 'grab';  // Reset cursor
+        // Save the new position to localStorage
+        localStorage.setItem('wrapperTop', wrapper.style.top);
+        localStorage.setItem('wrapperLeft', wrapper.style.left);
     });
 
     window.addEventListener('mousemove', (e) => {
