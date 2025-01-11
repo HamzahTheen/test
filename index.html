@@ -1,23 +1,83 @@
-<!--
-  EYE FREE MODEL 3D BY Oscar creativo by OSCAR CREATIVO is licensed under Creative Commons Attribution.
-  Juvenile Teratophoneus curriei byrankinstudio is licensed under Creative Commons Attribution.
--->
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>A simple Three.JS App</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <h1>A simple three.js app</h1>
-    </header>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspiration Discoveraseer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        fadeIn: "fadeIn 1s ease-in-out",
+                        fadeOut: "fadeOut 1s ease-in-out",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        fadeOut: {
+                            "0%": { opacity: "1" },
+                            "100%": { opacity: "0" },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-white to-purple-200 text-gray-800 font-sans relative">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-gradient-to-r from-purple-600 to-indigo-600 flex flex-col items-center justify-center text-white">
+        <h1 class="text-4xl font-bold">Loading <span id="loading-percent">0</span>%</h1>
+        <div class="w-4/5 h-2 bg-white/20 rounded-full mt-5 relative overflow-hidden">
+            <div id="loading-progress" class="h-full bg-white transition-all duration-150"></div>
+        </div>
+    </div>
 
-    <main>
-      <div id="container3D"></div>
-    </main>
+    <!-- Cursor Light -->
+    <div id="cursor-light" class="fixed top-[-3px] left-[-6px] rounded-full pointer-events-none z-50 mix-blend-plus-lighter shadow-[0px_0px_30px_10px_#ffffff]"></div>
 
-    <script type="module" src="js/main.js"></script>
-  </body>
+    <!-- Hero Section -->
+    <section class="h-screen bg-gradient-to-r from-purple-500 to-indigo-500 text-white flex items-center">
+        <div class="mx-auto text-center animate-fadeIn">
+            <h2 class="text-4xl md:text-8xl font-bold mb-4">
+                Welcome to Our <br>
+                Discoveraseer Inspiration</h2>
+            <p class="text-lg md:text-xl mb-8">Discover the best itinerary for Aseer.</p>
+            <a href="/inspiration.html" class="bg-white text-purple-600 px-6 py-3 rounded-full text-lg font-medium shadow-md hover:bg-gray-100 transition">Get Started</a>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script>
+        // Loading Animation
+        let progress = 0;
+        const loadingPercent = document.getElementById("loading-percent");
+        const loadingProgress = document.getElementById("loading-progress");
+        const loadingScreen = document.getElementById("loading-screen");
+
+        const loadingInterval = setInterval(() => {
+            if (progress < 100) {
+                progress++;
+                loadingPercent.textContent = progress;
+                loadingProgress.style.width = progress + "%";
+            } else {
+                clearInterval(loadingInterval);
+                loadingScreen.classList.add("animate-fadeOut");
+                setTimeout(() => loadingScreen.remove(), 1000);
+            }
+        }, 1);
+
+        // Cursor Light
+        const cursorLight = document.getElementById("cursor-light");
+
+        document.addEventListener("mousemove", (e) => {
+            cursorLight.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+    </script>
+</body>
 </html>
