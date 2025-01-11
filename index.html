@@ -19,7 +19,6 @@
         }
         .wrapper {
             position: absolute;
-
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -173,6 +172,10 @@
         const newTop = scrollTop + walkY;
         wrapper.style.top = `${Math.min(Math.max(newTop, minY), maxY)}px`;
     });
+    //Add dynamic height to the wrapper
+    wrapper.style.maxHeight = '2200px';
+    wrapper.style.overflow = 'auto';
+
 </script>
 
 <script>
