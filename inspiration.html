@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discoveraseer Inspiration</title>
+    <!-- Add Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Disable default scrolling */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+        }
+        .wrapper {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        fadeIn: "fadeIn 1s ease-in-out",
+                        fadeOut: "fadeOut 1s ease-in-out",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        fadeOut: {
+                            "0%": { opacity: "1" },
+                            "100%": { opacity: "0" },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="cursor-grab animate-fadeIn">
+
+<!-- Background Sound -->
+<audio id="background-sound" autoplay loop>
+    <source src="/bg-music.mp3" type="audio/wav">
+    Your browser does not support the audio element.
+</audio>
+
+<div class="wrapper" id="wrapper">
+    <!-- The rows will be dynamically added here -->
+</div>
+
+<script>
+    const wrapper = document.getElementById('wrapper');
+    const imagesPerRow = 10;
+    const totalImages = 100;
+    const imageWidth = 300; // Width of each image
+    const imageHeight = 500; // Height of each image
+    const hoverSound = new Audio('/card_sound.mp3'); // Sound effect
+
+    // Example list of image URLs
+    const imageUrls = [
+        '/img.webp?text=Image+1', '/img.webp?text=Image+2', 
+        '/img.webp?text=Image+3', '/img.webp?text=Image+4', 
+        '/img.webp?text=Image+5', '/img.webp?text=Image+6', 
+        '/img.webp?text=Image+7', '/img.webp?text=Image+8', 
+        '/img.webp?text=Image+9', '/img.webp?text=Image+10',
+        '/img.webp?text=Image+1', '/img.webp?text=Image+2', 
+        '/img.webp?text=Image+3', '/img.webp?text=Image+4', 
+        '/img.webp?text=Image+5', '/img.webp?text=Image+6', 
+        '/img.webp?text=Image+7', '/img.webp?text=Image+8', 
+        '/img.webp?text=Image+9', '/img.webp?text=Image+10',
+        '/img.webp?text=Image+1', '/img.webp?text=Image+2', 
+        '/img.webp?text=Image+3', '/img.webp?text=Image+4', 
+        '/img.webp?text=Image+5', '/img.webp?text=Image+6', 
+        '/img.webp?text=Image+7', '/img.webp?text=Image+8', 
+        '/img.webp?text=Image+9', '/img.webp?text=Image+10',
+                '/img.webp?text=Image+1', '/img.webp?text=Image+2', 
+        '/img.webp?text=Image+3', '/img.webp?text=Image+4', 
+        '/img.webp?text=Image+5', '/img.webp?text=Image+6', 
+        '/img.webp?text=Image+7', '/img.webp?text=Image+8', 
+        '/img.webp?text=Image+9', '/img.webp?text=Image+10',
+        // Add more URLs here
+    ];
+
+    // Generate the images in rows
+    function generateImages() {
+        let currentImage = 0;
+        for (let rowIndex = 0; rowIndex < Math.ceil(totalImages / imagesPerRow); rowIndex++) {
+            const row = document.createElement('div');
+            row.classList.add('flex', 'gap-4', 'flex-wrap');  // Add tailwind classes for flex, gap, and wrap
+            
+            for (let colIndex = 0; colIndex < imagesPerRow; colIndex++) {
+                if (currentImage < imageUrls.length) {
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-300 flex items-center justify-center rounded-xl transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer';
+                    card.style.width = `${imageWidth}px`;  // Set the image width dynamically
+                    card.style.height = `${imageHeight}px`; // Set the image height dynamically
+
+                    const image = document.createElement('img');
+                    image.src = imageUrls[currentImage];  // Set the image source
+                    image.alt = `Image ${currentImage + 1}`; // Add alt text
+                    image.classList.add('rounded-xl', 'w-full', 'h-full', 'object-cover', 'pointer-events-none', 'select-none');
+
+                    card.appendChild(image);
+
+                    // Add hover sound effect
+                    card.addEventListener('mouseenter', () => {
+                        hoverSound.play();  // Play sound when hovering
+                    });
+                    
+                    row.appendChild(card);
+                    currentImage++;
+                }
+            }
+            wrapper.appendChild(row);
+        }
+
+        // Set the wrapper width based on number of images per row
+        wrapper.style.width = `${imagesPerRow * imageWidth + (imagesPerRow - 1) * 16}px`; // Include gap between images
+
+        // Set the wrapper height based on number of rows
+        const rows = Math.ceil(totalImages / imagesPerRow);
+        wrapper.style.height = `${rows * imageHeight + (rows - 1) * 16}px`; // Include gap between rows
+    }
+
+    generateImages();
+
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+
+    // Restore position from localStorage on page load
+    window.addEventListener('load', () => {
+        const savedTop = localStorage.getItem('wrapperTop');
+        const savedLeft = localStorage.getItem('wrapperLeft');
+        
+        if (savedTop) {
+            wrapper.style.top = savedTop;
+        }
+        if (savedLeft) {
+            wrapper.style.left = savedLeft;
+        }
+    });
+
+    window.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        document.body.style.cursor = 'grabbing';  // Change cursor when dragging
+        startX = e.pageX;
+        startY = e.pageY;
+        scrollLeft = wrapper.offsetLeft;  // Get current horizontal position of wrapper
+        scrollTop = wrapper.offsetTop;   // Get current vertical position of wrapper
+    });
+
+    window.addEventListener('mouseleave', () => {
+        isDragging = false;
+        document.body.style.cursor = 'grab';  // Reset cursor
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.body.style.cursor = 'grab';  // Reset cursor
+        // Save the new position to localStorage
+        localStorage.setItem('wrapperTop', wrapper.style.top);
+        localStorage.setItem('wrapperLeft', wrapper.style.left);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();  // Prevent default behavior to disable scrolling
+
+        const x = e.pageX;
+        const y = e.pageY;
+        const walkX = (x - startX);  // Horizontal drag distance
+        const walkY = (y - startY);  // Vertical drag distance
+
+        // Limit horizontal drag (X-axis)
+        const minX = -(wrapper.offsetWidth - window.innerWidth);  // Left limit
+        const maxX = 0;  // Right limit
+        const newLeft = scrollLeft + walkX;
+        wrapper.style.left = `${Math.min(Math.max(newLeft, minX), maxX)}px`;
+
+        // Limit vertical drag (Y-axis)
+        const minY = -(wrapper.offsetHeight - window.innerHeight);  // Top limit
+        const maxY = 0;  // Bottom limit
+        const newTop = scrollTop + walkY;
+        wrapper.style.top = `${Math.min(Math.max(newTop, minY), maxY)}px`;
+    });
+    //Add dynamic height to the wrapper
+    wrapper.style.maxHeight = '2200px';
+    wrapper.style.overflow = 'auto';
+
+</script>
+
+<script>
+    const audio = document.getElementById('background-sound');
+    
+    // Try to play the audio when the page loads
+    window.addEventListener('load', function() {
+        try {
+            audio.play();
+        } catch (e) {
+            // If autoplay is blocked, show a message to the user
+            alert("Click anywhere to enable background sound.");
+        }
+    });
+
+    // Add a click listener to start the audio on user interaction
+    document.body.addEventListener('click', function() {
+        audio.play();
+    });
+</script>
+</body>
+</html>
