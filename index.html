@@ -29,21 +29,21 @@
         };
     </script>
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-white to-purple-200 text-gray-800 font-sans relative">
+<body class="bg-gradient-to-br from-blue-100 via-white to-purple-200 text-gray-800 font-sans relative overflow-hidden">
     <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 z-50 bg-gradient-to-r from-purple-600 to-indigo-600 flex flex-col items-center justify-center text-white">
+    <!-- <div id="loading-screen" class="fixed inset-0 z-50 bg-gradient-to-r from-purple-600 to-indigo-600 flex flex-col items-center justify-center text-white">
         <h1 class="text-4xl font-bold">Loading <span id="loading-percent">0</span>%</h1>
         <div class="w-4/5 h-2 bg-white/20 rounded-full mt-5 relative overflow-hidden">
             <div id="loading-progress" class="h-full bg-white transition-all duration-150"></div>
         </div>
     </div>
-
+-->
     <!-- Cursor Light -->
     <div id="cursor-light" class="fixed top-[-3px] left-[-6px] rounded-full pointer-events-none z-50 mix-blend-plus-lighter shadow-[0px_0px_30px_10px_#ffffff]"></div>
 
     <!-- Hero Section -->
     <section class="h-screen bg-gradient-to-r from-purple-500 to-indigo-500 text-white flex items-center">
-        <div class="mx-auto text-center animate-fadeIn">
+        <div class="mx-auto text-center animate-fadeIn relative z-20">
             <h2 class="text-4xl md:text-8xl font-bold mb-4">
                 Welcome to Our <br>
                 Discoveraseer Inspiration</h2>
@@ -51,6 +51,17 @@
             <a href="/inspiration.html" class="bg-white text-purple-600 px-6 py-3 rounded-full text-lg font-medium shadow-md hover:bg-gray-100 transition">Get Started</a>
         </div>
     </section>
+
+
+
+
+
+<div class="wrapper relative z-[10] flex justify-center items-center" id="wrapper"></div>
+
+
+
+</html>
+
 
     <!-- JavaScript -->
     <script>
@@ -77,6 +88,93 @@
 
         document.addEventListener("mousemove", (e) => {
             cursorLight.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+    </script>
+
+
+
+    <script>
+        const wrapper = document.getElementById('wrapper');
+        const imagesPerRow = 10;
+        const imageWidth = 300;
+        const imageHeight = 500;
+        const hoverSound = new Audio('/card_sound.mp3');
+    
+        // Example list of image URLs
+        const imageUrls = Array(10).fill(null).map((_, i) => `/img.webp?text=Image+${i + 1}`);
+    
+        // Load images into the wrapper
+        function generateRows() {
+            for (let i = 0; i < 3; i++) { // Start with 3 sets of rows
+                addRow();
+            }
+        }
+    
+        function addRow() {
+            const row = document.createElement('div');
+            row.classList.add('flex', 'gap-4', 'flex-wrap', 'w-1/4', 'mx-auto');
+            
+            for (let j = 0; j < imagesPerRow; j++) {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-300 flex items-center justify-center rounded-xl transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer';
+                card.style.width = `${imageWidth}px`;
+                card.style.height = `${imageHeight}px`;
+    
+                const image = document.createElement('img');
+                const imgIndex = j % imageUrls.length;
+                image.src = imageUrls[imgIndex];
+                image.alt = `Image ${imgIndex + 1}`;
+                image.classList.add('rounded-xl', 'w-full', 'h-full', 'object-cover', 'pointer-events-none', 'select-none');
+    
+                card.appendChild(image);
+                card.addEventListener('mouseenter', () => hoverSound.play());
+                row.appendChild(card);
+            }
+    
+            wrapper.appendChild(row);
+        }
+    
+        // Infinite loop scrolling
+        let scrollOffset = 0;
+        const wrapperHeight = 3 * (imageHeight + 16); // 3 rows initially, including gaps
+    
+        function loopScroll() {
+            scrollOffset += 1; // Scroll speed
+    
+            // Reset scrollOffset and append new rows to simulate looping
+            if (scrollOffset >= wrapperHeight) {
+                scrollOffset = 0;
+                addRow();
+                wrapper.firstChild.remove(); // Remove the first row to keep the DOM lightweight
+            }
+    
+            wrapper.style.transform = `translateY(-${scrollOffset}px)`;
+            requestAnimationFrame(loopScroll);
+        }
+    
+        generateRows();
+        loopScroll();
+    
+        // Dragging logic for user interaction
+        let isDragging = false;
+        let startY, currentOffset;
+    
+        window.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startY = e.pageY;
+            currentOffset = scrollOffset;
+            document.body.style.cursor = 'grabbing';
+        });
+    
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.cursor = 'grab';
+        });
+    
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dragDistance = e.pageY - startY;
+            scrollOffset = currentOffset - dragDistance;
         });
     </script>
 </body>
